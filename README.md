@@ -1,0 +1,1 @@
+## Furniture app server-side project using Django
