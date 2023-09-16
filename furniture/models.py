@@ -10,6 +10,7 @@ class Product(models.Model):
     quantity = models.IntegerField(default=0, null=False, blank=False)
     description = models.TextField(validators=[MinLengthValidator(10), MaxLengthValidator(300)], null=False, blank=False)
     location = models.CharField(max_length=100, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
