@@ -1,5 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from .serializers import ProductSerializer
+from .models import Product
 
 @api_view(['GET'])
 def get_routes(request):
@@ -37,3 +39,9 @@ def get_routes(request):
     ]
 
     return Response(routes)
+
+@api_view(['GET'])
+def get_products(request):
+    products = Product.objects.all().order_by('-created_at')
+    serializer = ProductSerializer(products, many=True)
+    return Response(serializer.data)
