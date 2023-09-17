@@ -12,3 +12,9 @@ class ProductSerializer(ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+
+    def create(self, validated_data):
+        location_data = validated_data.pop('location')
+        location, created = Location.objects.get_or_create(**location_data)
+        product = Product.objects.create(location=location, **validated_data)
+        return product
