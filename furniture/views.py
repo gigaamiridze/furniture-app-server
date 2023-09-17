@@ -1,5 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 from .serializers import ProductSerializer
 from .models import Product
 
@@ -19,7 +20,7 @@ def get_routes(request):
             'description': 'Returns a single product object'
         },
         {
-            'Endpoint': '/products',
+            'Endpoint': '/create-product',
             'method': 'POST',
             'body': {'body': ''},
             'description': 'Creates new product with data sent in post request'
@@ -51,3 +52,11 @@ def get_product(request, pk):
     product = Product.objects.get(pk=pk)
     serializer = ProductSerializer(product, many=False)
     return Response(serializer.data)
+
+@api_view(['POST'])
+def create_product(request):
+    serializer = ProductSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
