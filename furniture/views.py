@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from .serializers import ProductSerializer
 from .models import Product
 
@@ -75,7 +76,9 @@ def create_product(request):
 
 @api_view(['GET'])
 def search_product(request, key):
-    products = Product.objects.filter(name__icontains=key)
+    products = Product.objects.filter(
+        Q(name__icontains=key) | Q(supplier__icontains=key) | Q(location__country__icontains=key) | Q(location__city__icontains=key)
+    )
 
     if not products:
         return Response({'error': f'No products found for the search key "{key}".'}, status=status.HTTP_404_NOT_FOUND)
