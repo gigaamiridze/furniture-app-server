@@ -18,6 +18,7 @@ class Product(models.Model):
     description = models.TextField(validators=[MinLengthValidator(10), MaxLengthValidator(300)], null=False, blank=False)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, null=False, related_name='products')
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
