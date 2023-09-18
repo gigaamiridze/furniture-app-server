@@ -1,6 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from django.core.exceptions import ObjectDoesNotExist
 from .serializers import ProductSerializer
 from .models import Product
 
@@ -39,19 +40,22 @@ def get_routes(request):
         },
     ]
 
-    return Response(routes)
+    return Response(routes, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def get_products(request):
     products = Product.objects.all().order_by('-created_at')
     serializer = ProductSerializer(products, many=True)
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def get_product(request, pk):
-    product = Product.objects.get(pk=pk)
-    serializer = ProductSerializer(product, many=False)
-    return Response(serializer.data)
+    try:
+        product = Product.objects.get(pk=pk)
+        serializer = ProductSerializer(product, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except ObjectDoesNotExist:
+        return Response(f'Product with ID {pk} not found', status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 def create_product(request):
